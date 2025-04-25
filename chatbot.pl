@@ -1,7 +1,7 @@
 % === Emotion-Based Chatbot with DCG and Synonym Recognition ===
 
 % --- Core Emotion Responses ---
-respond(anxious, "Take a deep breath and drink a glass of water. Write down what's making you anxious. If there's something you can do about it now, take action—it'll help you feel more in control. If it's out of your hands, let it go, say a prayer if you’d like, and trust things will work out.").
+respond(anxious, "Take a deep breath and drink a glass of water. Write down what is making you anxious. If there is something you can do about it now, take action—it will help you feel more in control. If it is out of your hands, let it go, say a prayer if you would like, and trust things will work out.").
 
 respond(sad, "Ask yourself: What made you feel this way? Was it something you did or something outside your control? If it was you, acknowledge it, learn from it, and promise yourself to do better. If it was external, remember you can’t control everything—but you can choose how to respond. Keep moving forward.").
 
@@ -11,9 +11,9 @@ respond(angry, "What exactly are you angry about—and why? Can you do something
 
 respond(shy, "Most people are focused on themselves, not on you. Let that free you. This is your one life—don’t miss out. Take small steps, one at a time. Be brave, even if your voice shakes. You’re doing it for you.").
 
-respond(afraid, "Ask yourself: What exactly are you afraid of? Who or what is triggering it? What’s one small thing you can do right now? Action reduces fear—take one small step forward.").
+respond(afraid, "Ask yourself: What exactly are you afraid of? Who or what is triggering it? What is one small thing you can do right now? Action reduces fear—take one small step forward.").
 
-respond(annoyed, "Pause. Drink a glass of water. Write down what’s bothering you. Can you fix it right now? If yes, do it. If not, don’t let it ruin your peace—pray, let it go, or distract yourself with something calming.").
+respond(annoyed, "Pause. Drink a glass of water. Write down what is bothering you. Can you fix it right now? If yes, do it. If not, don’t let it ruin your peace—pray, let it go, or distract yourself with something calming.").
 
 % --- Synonym Mapping ---
 map_synonym(worried, anxious).
@@ -64,7 +64,7 @@ sentence(Emotion) --> emotion_phrase(Emotion).
 
 emotion_phrase(Emotion) --> [i, feel], emotion_word(Emotion).
 emotion_phrase(Emotion) --> [i, am], emotion_word(Emotion).
-emotion_phrase(Emotion) --> [i'm], emotion_word(Emotion).
+emotion_phrase(Emotion) --> ["i'm"], emotion_word(Emotion).
 emotion_phrase(Emotion) --> [feeling], emotion_word(Emotion).
 
 emotion_word(anxious) --> [anxious].
@@ -84,21 +84,22 @@ normalize_emotion(Word, Word).
 chat :-
     writeln("Emotion Chatbot (type 'bye.' to quit)"),
     repeat,
-    write('User: '),
-    read_line_to_string(user_input, Input),
-    downcase_atom(Input, LowercaseInput),
-    atomic_list_concat(Words, ' ', LowercaseInput),
-    (
-        Words = [bye] ->
-            writeln("Bot: Goodbye! Take care."), !;
+      write('User: '),
+      read_line_to_string(user_input, Input),
+      downcase_atom(Input, LowercaseInput),
+      atomic_list_concat(Words, ' ', LowercaseInput),
+      (
+        Words = ["bye"] ->
+          writeln("Bot: Goodbye! Take care."), !
+      ;
         (
-            member(W, Words),
-            normalize_emotion(W, Emotion),
-            respond(Emotion, Response) ->
-                format("Bot: ~w~n", [Response])
+          member(W, Words),
+          normalize_emotion(W, Emotion),
+          respond(Emotion, Response)
+        ->
+          format("Bot: ~w~n", [Response])
         ;
-            writeln("Bot: I'm not sure how to respond. Can you rephrase?")
+          writeln("Bot: I'm not sure how to respond. Can you rephrase?")
         )
-    ),
+      ),
     fail.
-
