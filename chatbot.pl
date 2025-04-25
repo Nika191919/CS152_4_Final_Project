@@ -3,7 +3,7 @@
 % --- Core Emotion Responses ---
 respond(anxious, "Take a deep breath and drink a glass of water. Write down what's making you anxious. If there's something you can do about it now, take action—it'll help you feel more in control. If it's out of your hands, let it go, say a prayer if you’d like, and trust things will work out.").
 
-respond(sad, "Ask yourself: What made you feel this way? Was it something you did or something outside your control?\nIf it was you, acknowledge it, learn from it, and promise yourself to do better. If it was external, remember you can’t control everything—but you can choose how to respond. Keep moving forward.").
+respond(sad, "Ask yourself: What made you feel this way? Was it something you did or something outside your control? If it was you, acknowledge it, learn from it, and promise yourself to do better. If it was external, remember you can’t control everything—but you can choose how to respond. Keep moving forward.").
 
 respond(happy, "Take a moment to slow down and feel the joy. Express gratitude, share the moment if you can, and use this energy to keep growing and doing good.").
 
@@ -48,7 +48,6 @@ map_synonym(reserved, shy).
 map_synonym(hesitant, shy).
 
 map_synonym(fear, afraid).
-map_synonym(error, afraid).
 map_synonym(dread, afraid).
 map_synonym(panic, afraid).
 map_synonym(apprehension, afraid).
@@ -62,6 +61,7 @@ map_synonym(exasperated, annoyed).
 
 % --- DCG Grammar for Base Emotions ---
 sentence(Emotion) --> emotion_phrase(Emotion).
+
 emotion_phrase(Emotion) --> [i, feel], emotion_word(Emotion).
 emotion_phrase(Emotion) --> [i, am], emotion_word(Emotion).
 emotion_phrase(Emotion) --> [i'm], emotion_word(Emotion).
@@ -78,7 +78,7 @@ emotion_word(annoyed) --> [annoyed].
 % --- Normalize Word to Core Emotion ---
 normalize_emotion(Word, Emotion) :-
     map_synonym(Word, Emotion), !.
-normalize_emotion(Word, Word). % If already a core emotion
+normalize_emotion(Word, Word).
 
 % --- Main Chat Loop ---
 chat :-
@@ -101,3 +101,4 @@ chat :-
         )
     ),
     fail.
+
