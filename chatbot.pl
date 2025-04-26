@@ -82,24 +82,28 @@ normalize_emotion(Word, Word).
 
 % --- Main Chat Loop ---
 chat :-
-    writeln("Emotion Chatbot (type 'bye.' to quit)"),
+    writeln("Emotion Chatbot (type 'bye' to quit)"),
     repeat,
-      write('User: '),
-      read_line_to_string(user_input, Input),
-      downcase_atom(Input, LowercaseInput),
-      atomic_list_concat(Words, ' ', LowercaseInput),
-      (
-        Words = ["bye"] ->
-          writeln("Bot: Goodbye! Take care."), !
-      ;
+    write('User: '),
+    read_line_to_string(user_input, Input),
+    downcase_atom(Input, LowercaseInput),
+    atom_chars(LowercaseInput, Chars),
+    exclude(is_punct, Chars, CleanChars),
+    atom_chars(CleanAtom, CleanChars),  % <== CONVERT BACK to atom
+    atomic_list_concat(Words, ' ', CleanAtom),
+    (
+        member(bye, Words) ->
+            writeln("Bot: Goodbye! Take care."), !;
         (
-          member(W, Words),
-          normalize_emotion(W, Emotion),
-          respond(Emotion, Response)
-        ->
-          format("Bot: ~w~n", [Response])
-        ;
-          writeln("Bot: I'm not sure how to respond. Can you rephrase?")
+            member(W, Words),
+            normalize_emotion(W, Emotion),
+            respond(Emotion, Response) ->
+                format("Bot: ~w~n", [Response])
+            ;
+            writeln("Bot: I'm not sure how to respond. Can you rephrase?")
         )
-      ),
+    ),
     fail.
+
+is_punct(Char) :-
+    member(Char, ['.', ',', '!', '?', ';', ':']).
