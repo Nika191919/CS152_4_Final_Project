@@ -89,21 +89,30 @@ chat :-
     downcase_atom(Input, LowercaseInput),
     atom_chars(LowercaseInput, Chars),
     exclude(is_punct, Chars, CleanChars),
-    atom_chars(CleanAtom, CleanChars),  % <== CONVERT BACK to atom
+    atom_chars(CleanAtom, CleanChars),
     atomic_list_concat(Words, ' ', CleanAtom),
     (
         member(bye, Words) ->
             writeln("Bot: Goodbye! Take care."), !;
         (
-            member(W, Words),
-            normalize_emotion(W, Emotion),
-            respond(Emotion, Response) ->
-                format("Bot: ~w~n", [Response])
+            findall(Emotion, (
+                member(W, Words),
+                normalize_emotion(W, Emotion),
+                respond(Emotion, _)
+            ), Emotions),
+            Emotions \= [] ->
+                reply_emotions(Emotions)
             ;
-            writeln("Bot: I'm not sure how to respond. Can you rephrase?")
+                writeln("Bot: I'm not sure how to respond. Can you rephrase?")
         )
     ),
     fail.
+
+reply_emotions([]).
+reply_emotions([Emotion|Rest]) :-
+    respond(Emotion, Response),
+    format("Bot: ~w~n", [Response]),
+    reply_emotions(Rest).
 
 is_punct(Char) :-
     member(Char, ['.', ',', '!', '?', ';', ':']).
